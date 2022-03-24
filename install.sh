@@ -44,8 +44,8 @@ fi
 # The total number of steps in the installation process
 TOTAL_STEPS="7"
 # Tbw data path
-TBW_PATH="./tbw-dashboard"
-INSTALL_PATH="$HOME/.tbw-dashboard"
+TBW_PATH="./tbw_monitoring"
+INSTALL_PATH="$HOME/.tbw_node_monitoring"
 CONFIG_FILE="$INSTALL_PATH/config"
 # The version of docker-compose to install
 DOCKER_COMPOSE_VERSION="1.29.2"

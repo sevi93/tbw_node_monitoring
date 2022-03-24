@@ -1,0 +1,21 @@
+version: "3.4"
+services:
+  cadvisor:
+    image: google/cadvisor:v0.33.0
+    container_name: ${COMPOSE_PROJECT_NAME}_cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    restart: unless-stopped
+    networks:
+      - net
+    ports:
+      - target: 8080
+        published: 9338
+        protocol: tcp
+    labels:
+      org.label-schema.group: "monitoring"
+networks:
+  net:
