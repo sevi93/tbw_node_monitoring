@@ -1,0 +1,19 @@
+version: "3.4"
+services:
+  grafana:
+    image: grafana/grafana:8.3.2
+    container_name: ${COMPOSE_PROJECT_NAME}_grafana
+    restart: unless-stopped
+    environment:
+      - GF_SERVER_HTTP_PORT=${GRAFANA_PORT:-3100}
+    ports:
+      - "${GRAFANA_PORT:-3100}:${GRAFANA_PORT:-3100}/tcp"
+    volumes:
+      - "./grafana.yml:/etc/grafana/provisioning/datasources/prometheus.yml"
+      - "grafana-storage:/var/lib/grafana"
+    networks:
+      - net
+networks:
+  net:
+volumes:
+  grafana-storage:

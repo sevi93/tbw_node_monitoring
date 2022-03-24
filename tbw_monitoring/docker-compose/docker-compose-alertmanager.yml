@@ -1,0 +1,18 @@
+version: "3.4"
+services:
+  alertmanager:
+    image: prom/alertmanager:v0.18.0
+    container_name: ${COMPOSE_PROJECT_NAME}_alertmanager
+    deploy:
+      replicas: 1
+    volumes:
+      - "./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml"
+      - ."/alertmanager/templates/default.tmpl:/etc/alertmanager/templates/default.tmpl"
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+    networks:
+      - net
+networks:
+  net:
+volumes:
+  alertmanager-data:

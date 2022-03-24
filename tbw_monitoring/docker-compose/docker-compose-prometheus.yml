@@ -1,0 +1,32 @@
+version: "3.4"
+services:
+  prometheus:
+    image: prom/prometheus:v2.31.1
+    container_name: ${COMPOSE_PROJECT_NAME}_prometheus
+    restart: unless-stopped
+    command:
+      - "--web.listen-address=:${PROMETHEUS_PORT:-9091}"
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    # Uncomment the lines below if you want to expose Prometheus to your local network, so other machines can access it
+    ports:
+      - "${PROMETHEUS_PORT:-9091}:${PROMETHEUS_PORT:-9091}/tcp"
+    volumes:
+      - "../prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
+      - "prometheus-data:/prometheus"
+    networks:
+      - net
+      - monitor-net
+    extra_hosts:
+      - "host.docker.internal: 172.23.5.254"
+networks:
+  monitor-net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.23.0.0/16
+          ip_range: 172.23.5.0/24
+          gateway: 172.23.5.254
+  net:
+volumes:
+  prometheus-data:
