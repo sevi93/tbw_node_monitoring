@@ -6,6 +6,7 @@ services:
     restart: unless-stopped
     environment:
       - GF_SERVER_HTTP_PORT=${GRAFANA_PORT:-3100}
+      - GF_INSTALL_PLUGINS=jdbranham-diagram-panel
     ports:
       - "${GRAFANA_PORT:-3100}:${GRAFANA_PORT:-3100}/tcp"
     volumes:

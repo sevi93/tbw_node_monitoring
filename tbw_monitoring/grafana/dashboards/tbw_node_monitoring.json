@@ -22,7 +22,7 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": 2,
-  "iteration": 1648126509533,
+  "iteration": 1648452678302,
   "links": [
     {
       "asDropdown": false,
@@ -74,7 +74,7 @@
       "type": "text"
     },
     {
-      "description": "This will turn red when your system needs to be rebooted because of security updates.\n\nSetting this up is Operating System specific, so it doesn't come ready out of the box; see the documentation at https://docs.rocketpool.net/guides/node/grafana.html for more information.",
+      "description": "This will turn red when your system needs to be rebooted because of security updates.\n",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -145,7 +145,7 @@
       "type": "stat"
     },
     {
-      "description": "Tracks any updates that are available for your OS or for Rocket Pool but haven't been applied yet. When one of these numbers is higher than 0, it means you should update your system or Rocket Pool accordingly.\n\nSetting this up is Operating System specific, so it doesn't come ready out of the box; see the documentation at https://docs.rocketpool.net/guides/node/grafana.html for more information.",
+      "description": "Tracks any updates that are available for your OS or for Rocket Pool but haven't been applied yet. When one of these numbers is higher than 0, it means you should update your system or Rocket Pool accordingly.\n",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -273,7 +273,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "exemplar": true,
-          "expr": "tbw_delegate_data{delegate=\"delegate_rank\"}",
+          "expr": "tbw_delegate{delegate=\"rank\"}",
           "hide": false,
           "interval": "",
           "legendFormat": "Delegate rank",
@@ -303,8 +303,8 @@
               "tooltip": false,
               "viz": false
             },
-            "lineInterpolation": "stepAfter",
-            "lineWidth": 1,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -332,7 +332,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "none"
         },
         "overrides": []
       },
@@ -346,7 +347,7 @@
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "list",
+          "displayMode": "table",
           "placement": "bottom"
         },
         "tooltip": {
@@ -361,7 +362,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "exemplar": true,
-          "expr": "sum(tbw_delegate_data{delegate=\"delegate_forged_block\"})",
+          "expr": "sum(tbw_delegate{delegate=\"forged_block\"})",
           "format": "time_series",
           "instant": false,
           "interval": "",
@@ -373,15 +374,214 @@
       "type": "timeseries"
     },
     {
-      "description": "The total CPU usage of your machine, with respect to all cores.",
+      "description": "Busy state of all CPU cores together",
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 1,
+          "max": 100,
           "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 85
+              },
+              {
+                "color": "red",
+                "value": 95
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 2,
+        "x": 0,
+        "y": 4
+      },
+      "id": 238,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "8.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "exemplar": true,
+          "expr": "(((count(count(avg by (instance)(node_cpu_seconds_total{job=\"node\"})) by (cpu))) - avg(avg by (instance)(irate(node_cpu_seconds_total{mode='idle',job=\"node\"}[5m])))) * 100) / count(count(avg by (instance)(node_cpu_seconds_total{job=\"node\"})) by (cpu))",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "CPU Busy",
+      "type": "gauge"
+    },
+    {
+      "description": "Busy state of all CPU cores together (1 min average)",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 85
+              },
+              {
+                "color": "red",
+                "value": 95
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 2,
+        "x": 2,
+        "y": 4
+      },
+      "id": 241,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "8.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "exemplar": true,
+          "expr": "avg(node_load1{job=\"node\"}) /  count(count(node_cpu_seconds_total{job=\"node\"}) by (cpu)) * 100",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "CPU System Load (1m avg)",
+      "type": "gauge"
+    },
+    {
+      "description": "Non available RAM memory",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 80
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 2,
+        "x": 4,
+        "y": 4
+      },
+      "id": 240,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "8.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "exemplar": true,
+          "expr": "100 - ((sum(node_memory_MemAvailable_bytes{job=\"node\"}) * 100) / sum(node_memory_MemTotal_bytes{job=\"node\"}))",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Used RAM Memory",
+      "type": "gauge"
+    },
+    {
+      "description": "The total amount of RAM that your system has installed.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -391,17 +591,17 @@
               }
             ]
           },
-          "unit": "percentunit"
+          "unit": "bytes"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 3,
+        "h": 4,
         "w": 2,
-        "x": 0,
+        "x": 6,
         "y": 4
       },
-      "id": 66,
+      "id": 64,
       "options": {
         "colorMode": "value",
         "graphMode": "none",
@@ -421,147 +621,14 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "1 - avg (irate(node_cpu_seconds_total{job=\"node\", mode=\"idle\"}[$__rate_interval]))",
-          "interval": "",
-          "legendFormat": "Core {{cpu}}",
-          "refId": "A"
-        }
-      ],
-      "title": "Total CPU",
-      "type": "stat"
-    },
-    {
-      "description": "The temperature of your CPU (you can set this to Tctl or Tdie, whichever you prefer to monitor).\n\nTo get the correct chip and sensor ID, you'll want to run `sensors` from the `lm-sensors` package. See the documentation at https://docs.rocketpool.net/guides/node/grafana.html for more information.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "#EAB839",
-                "value": 50
-              },
-              {
-                "color": "red",
-                "value": 65
-              }
-            ]
-          },
-          "unit": "celsius"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 2,
-        "x": 2,
-        "y": 4
-      },
-      "id": 82,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.3.2",
-      "targets": [
-        {
-          "exemplar": true,
-          "expr": "node_hwmon_temp_celsius{job=\"node\", chip=\"\", sensor=\"\"}",
+          "expr": "node_memory_MemTotal_bytes{job=\"node\"}",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
-      "title": "CPU Temp",
+      "title": "Total RAM",
       "type": "stat"
-    },
-    {
-      "description": "How much of your total swap space you're currently using. If you have swap space enabled, you want this to be as low as possible - otherwise, your system is running out of free RAM.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "decimals": 2,
-          "mappings": [],
-          "max": 1,
-          "min": 0,
-          "thresholds": {
-            "mode": "percentage",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "#EAB839",
-                "value": 20
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 2,
-        "x": 6,
-        "y": 4
-      },
-      "id": 92,
-      "options": {
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "text": {}
-      },
-      "pluginVersion": "8.3.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
-          },
-          "exemplar": true,
-          "expr": "((node_memory_SwapTotal_bytes{job=\"node\"} - node_memory_SwapFree_bytes{job=\"node\"}) / node_memory_SwapTotal_bytes{job=\"node\"})",
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Swap Space Usage",
-      "type": "gauge"
     },
     {
       "description": "The total amount of RAM that your system is currently using.",
@@ -585,7 +652,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 3,
+        "h": 4,
         "w": 2,
         "x": 8,
         "y": 4
@@ -624,37 +691,44 @@
       "type": "stat"
     },
     {
-      "description": "The total amount of RAM that your system has installed.",
+      "description": "Used Swap",
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "thresholds"
           },
           "mappings": [],
+          "max": 100,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "dark-yellow",
+                "color": "green",
                 "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 10
+              },
+              {
+                "color": "red",
+                "value": 25
               }
             ]
           },
-          "unit": "bytes"
+          "unit": "percent"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 3,
+        "h": 4,
         "w": 2,
         "x": 10,
         "y": 4
       },
-      "id": 64,
+      "id": 92,
       "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
@@ -663,24 +737,30 @@
           "fields": "",
           "values": false
         },
-        "text": {},
-        "textMode": "auto"
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "text": {}
       },
       "pluginVersion": "8.3.2",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
           "exemplar": true,
-          "expr": "node_memory_MemTotal_bytes{job=\"node\"}",
+          "expr": "((node_memory_SwapTotal_bytes{job=\"node\"} - node_memory_SwapFree_bytes{job=\"node\"}) / (node_memory_SwapTotal_bytes{job=\"node\"} )) * 100",
+          "instant": false,
           "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
-      "title": "Total RAM",
-      "type": "stat"
+      "title": "Used SWAP",
+      "type": "gauge"
     },
     {
-      "description": "",
+      "description": "Voters pending payout not yet staged",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -700,8 +780,8 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 6,
-        "w": 6,
+        "h": 5,
+        "w": 3,
         "x": 16,
         "y": 5
       },
@@ -710,6 +790,133 @@
       "options": {
         "colorMode": "value",
         "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "exemplar": true,
+          "expr": "sum(tbw_payout{payout=\"pending_voters_payout\"}) / sum(tbw_config{param=\"atomic\"})",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "voters",
+          "refId": "A"
+        }
+      ],
+      "title": "Voters pending payout",
+      "transformations": [],
+      "type": "stat"
+    },
+    {
+      "description": "Delegate pending payout not yet staged",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 3,
+        "x": 19,
+        "y": 5
+      },
+      "id": 234,
+      "interval": "",
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "exemplar": true,
+          "expr": "sum(tbw_payout{payout=\"pending_delegate_payout\"}) / sum(tbw_config{param=\"atomic\"})",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "delegate",
+          "refId": "B"
+        }
+      ],
+      "title": "Delegate pending payout",
+      "transformations": [],
+      "type": "stat"
+    },
+    {
+      "description": "Amount of coin in delegate wallet",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 13,
+        "y": 7
+      },
+      "id": 233,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "auto",
         "reduceOptions": {
@@ -729,29 +936,13 @@
             "uid": "PBFA97CFB590B2093"
           },
           "exemplar": true,
-          "expr": "sum(tbw_payout_data{payout=\"pending_voters_payout\"}) / sum(tbw_config_data{param=\"atomic\"})",
-          "format": "time_series",
-          "hide": false,
-          "instant": false,
+          "expr": "sum(tbw_delegate{delegate=\"wallet_valance\"}) / sum(tbw_config{param=\"atomic\"})",
           "interval": "",
-          "legendFormat": "voters",
+          "legendFormat": "",
           "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
-          },
-          "exemplar": true,
-          "expr": "sum(tbw_payout_data{payout=\"pending_delegate_payout\"}) / sum(tbw_config_data{param=\"atomic\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "delegate",
-          "refId": "B"
         }
       ],
-      "title": "Pending payout",
-      "transformations": [],
+      "title": "Delegate wallet balance",
       "type": "stat"
     },
     {
@@ -846,7 +1037,7 @@
         "h": 6,
         "w": 6,
         "x": 0,
-        "y": 7
+        "y": 8
       },
       "id": 56,
       "options": {
@@ -985,7 +1176,7 @@
         "h": 6,
         "w": 6,
         "x": 6,
-        "y": 7
+        "y": 8
       },
       "id": 60,
       "options": {
@@ -1028,7 +1219,7 @@
       "type": "timeseries"
     },
     {
-      "description": "block number until your next payout.\n\n**NOTE: Lighthouse does not currently expose this metric, so this is a placeholder until its developers add it.**",
+      "description": "block number until your next payout.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1064,7 +1255,7 @@
         "h": 3,
         "w": 3,
         "x": 13,
-        "y": 7
+        "y": 10
       },
       "id": 154,
       "options": {
@@ -1090,7 +1281,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "exemplar": true,
-          "expr": "tbw_payout_data{payout=\"block_before_payout\"}",
+          "expr": "tbw_payout{payout=\"block_before_payout\"}",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -1100,25 +1291,16 @@
       "type": "stat"
     },
     {
-      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "thresholds"
           },
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "max": 50,
-          "min": 0,
+          "custom": {
+            "align": "left",
+            "displayMode": "auto"
+          },
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1127,33 +1309,106 @@
                 "value": null
               },
               {
-                "color": "yellow",
-                "value": 424
-              },
-              {
                 "color": "red",
-                "value": 600
+                "value": 80
               }
             ]
-          },
-          "unit": "s"
+          }
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
-        "w": 3,
-        "x": 13,
+        "h": 7,
+        "w": 6,
+        "x": 16,
         "y": 10
       },
-      "id": 12,
-      "links": [],
-      "maxDataPoints": 100,
+      "id": 230,
+      "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Voter"
+          }
+        ]
+      },
+      "pluginVersion": "8.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "exemplar": false,
+          "expr": "tbw_voters",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Voters list",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "instance": true,
+              "job": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "Value": "Balance",
+              "voters": "Voter"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "description": "Amount of staged payment ",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 13,
+        "y": 13
+      },
+      "id": 232,
       "options": {
         "colorMode": "value",
         "graphMode": "none",
         "justifyMode": "auto",
-        "orientation": "horizontal",
+        "orientation": "auto",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -1171,81 +1426,14 @@
             "uid": "PBFA97CFB590B2093"
           },
           "exemplar": true,
-          "expr": "time() - tbw_delegate_data{delegate=\"delegate_last_t_forged\"}",
+          "expr": "sum(tbw_payout{payout=\"staged_payout\"}) / sum(tbw_config{param=\"atomic\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
-      "title": "Time of last forged block",
+      "title": "Staged payout",
       "type": "stat"
-    },
-    {
-      "description": "How many peers Lighthouse is currently connected to for Beacon Chain traffic.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "links": [],
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "#EAB839",
-                "value": 30
-              },
-              {
-                "color": "green",
-                "value": 50
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 6,
-        "x": 16,
-        "y": 11
-      },
-      "id": 51,
-      "options": {
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true
-      },
-      "pluginVersion": "8.3.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
-          },
-          "exemplar": true,
-          "expr": "tbw_network_data{network=\"peers_number\"}",
-          "interval": "",
-          "legendFormat": "",
-          "refId": "B"
-        }
-      ],
-      "title": "Peers",
-      "type": "gauge"
     },
     {
       "description": "This tracks how long it takes between one of your processes trying to read from / write to your SSD, and when that operation is actually performed. Think of this like \"how long SSD reads and writes have to wait in a queue before completing\". The longer this time, the longer it takes for your node to perform its Beacon Chain duties.",
@@ -1300,7 +1488,7 @@
         "h": 5,
         "w": 6,
         "x": 0,
-        "y": 13
+        "y": 14
       },
       "id": 76,
       "options": {
@@ -1327,7 +1515,7 @@
       "type": "timeseries"
     },
     {
-      "description": "The disk space used by your primary (Operating System) hard drive. Change the `device` option in this query to be your machine's hard drive.\n\nSee the documentation at https://docs.rocketpool.net/guides/node/grafana.html for more information.",
+      "description": "The disk space used by your primary (Operating System) hard drive. Change the `device` option in this query to be your machine's hard drive.\n",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1361,7 +1549,7 @@
         "h": 5,
         "w": 3,
         "x": 6,
-        "y": 13
+        "y": 14
       },
       "id": 88,
       "options": {
@@ -1395,7 +1583,7 @@
       "type": "gauge"
     },
     {
-      "description": "An optional space monitor for a second disk or partition on your system. If you store your chain data on a separate drive or partition from your OS (such as with a Raspberry Pi), you can configure this to track that disk. Just modify the `device` setting in the query with your storage partition's path.\n\nSee the documentation at https://docs.rocketpool.net/guides/node/grafana.html for more information.",
+      "description": "An optional space monitor for a second disk or partition on your system. If you store your chain data on a separate drive or partition from your OS (such as with a Raspberry Pi), you can configure this to track that disk. Just modify the `device` setting in the query with your storage partition's path.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1429,7 +1617,7 @@
         "h": 5,
         "w": 3,
         "x": 9,
-        "y": 13
+        "y": 14
       },
       "id": 90,
       "options": {
@@ -1463,7 +1651,100 @@
       "type": "gauge"
     },
     {
-      "description": "block number until your next payout.\n\n**NOTE: Lighthouse does not currently expose this metric, so this is a placeholder until its developers add it.**",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "max": 50,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 2
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 13,
+        "y": 16
+      },
+      "id": 12,
+      "links": [],
+      "maxDataPoints": 100,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "exemplar": true,
+          "expr": "sum(tbw_blockchain{blockchain=\"b_cur_round\"}) - sum(tbw_blockchain{blockchain=\"d_cur_round\"})",
+          "interval": "",
+          "legendFormat": "Delegate round diff",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "exemplar": true,
+          "expr": "sum(tbw_blockchain{blockchain=\"b_cur_round\"}) - sum(tbw_blockchain{blockchain=\"t_cur_round\"})",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "TBW round diff",
+          "refId": "B"
+        }
+      ],
+      "title": "Block round diff",
+      "type": "stat"
+    },
+    {
+      "description": "Total payed rewards",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1496,10 +1777,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
-        "w": 9,
-        "x": 13,
-        "y": 15
+        "h": 3,
+        "w": 6,
+        "x": 16,
+        "y": 17
       },
       "id": 225,
       "options": {
@@ -1525,7 +1806,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "exemplar": true,
-          "expr": "sum(tbw_payout_data{payout=\"total_delegate_rewards\"}) / sum(tbw_config_data{param=\"atomic\"})",
+          "expr": "sum(tbw_payout{payout=\"total_delegate_rewards\"}) / sum(tbw_config{param=\"atomic\"})",
           "interval": "",
           "legendFormat": "Delegate",
           "refId": "A"
@@ -1536,7 +1817,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "exemplar": true,
-          "expr": "sum(tbw_payout_data{payout=\"total_voters_rewards\"}) / sum(tbw_config_data{param=\"atomic\"})",
+          "expr": "sum(tbw_payout{payout=\"total_voters_rewards\"}) / sum(tbw_config{param=\"atomic\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "Voters",
@@ -1547,7 +1828,7 @@
       "type": "stat"
     },
     {
-      "description": "The average read/write latency of your SSD. The lower it is, the faster your machine can process and respond to Beacon Chain activities like attesting. Change the `device` setting in the queries to be the SSD you want to track (typically the one with your chain data on it).\n\nSee the documentation at https://docs.rocketpool.net/guides/node/grafana.html for more information.",
+      "description": "The average read/write latency of your SSD. The lower it is, the faster your machine can process and respond to Beacon Chain activities like attesting. Change the `device` setting in the queries to be the SSD you want to track (typically the one with your chain data on it).\n",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1599,7 +1880,7 @@
         "h": 6,
         "w": 6,
         "x": 0,
-        "y": 18
+        "y": 19
       },
       "id": 70,
       "options": {
@@ -1642,7 +1923,7 @@
       "type": "timeseries"
     },
     {
-      "description": "A chart showing the network I/O used by your main network adapter over time. To make it work, change the `device` setting in the queries to match the name of the network adapter you want to track (you can use `ifconfig` to get a list of network adapters and find the right one). \n\nSee the documentation at https://docs.rocketpool.net/guides/node/grafana.html for more information.",
+      "description": "A chart showing the network I/O used by your main network adapter over time. To make it work, change the `device` setting in the queries to match the name of the network adapter you want to track (you can use `ifconfig` to get a list of network adapters and find the right one). ",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1694,7 +1975,7 @@
         "h": 6,
         "w": 6,
         "x": 6,
-        "y": 18
+        "y": 19
       },
       "id": 80,
       "options": {
@@ -1737,24 +2018,109 @@
       "type": "timeseries"
     },
     {
-      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "left",
+            "displayMode": "auto",
+            "filterable": true
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Address"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 318
+              }
+            ]
+          }
+        ]
+      },
       "gridPos": {
-        "h": 1,
+        "h": 8,
         "w": 9,
         "x": 13,
         "y": 20
       },
-      "id": 184,
+      "id": 236,
       "options": {
-        "content": "<br/>s",
-        "mode": "html"
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "Date"
+          }
+        ]
       },
       "pluginVersion": "8.3.2",
-      "transparent": true,
-      "type": "text"
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "exemplar": false,
+          "expr": "tbw_transactions",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Transaction history",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "instance": true,
+              "job": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "Value #A": "Balance",
+              "address": "Address",
+              "datetime": "Date"
+            }
+          }
+        }
+      ],
+      "type": "table"
     },
     {
-      "description": "The total network I/O that has gone through your main network adapter. To make it work, change the `device` setting in the queries to match the name of the network adapter you want to track (you can use `ifconfig` to get a list of network adapters and find the right one). \n\nSee the documentation at https://docs.rocketpool.net/guides/node/grafana.html for more information.",
+      "description": "The total network I/O that has gone through your main network adapter. To make it work, change the `device` setting in the queries to match the name of the network adapter you want to track (you can use `ifconfig` to get a list of network adapters and find the right one). \n",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1778,7 +2144,7 @@
         "h": 4,
         "w": 12,
         "x": 0,
-        "y": 24
+        "y": 25
       },
       "id": 74,
       "options": {
@@ -1828,9 +2194,26 @@
     {
       "gridPos": {
         "h": 1,
+        "w": 9,
+        "x": 13,
+        "y": 28
+      },
+      "id": 226,
+      "options": {
+        "content": "",
+        "mode": "markdown"
+      },
+      "pluginVersion": "8.3.2",
+      "title": "Network Stats",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "gridPos": {
+        "h": 1,
         "w": 12,
         "x": 0,
-        "y": 28
+        "y": 29
       },
       "id": 170,
       "options": {
@@ -1840,9 +2223,157 @@
       "pluginVersion": "8.3.2",
       "transparent": true,
       "type": "text"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 5,
+        "x": 13,
+        "y": 29
+      },
+      "id": 228,
+      "options": {
+        "displayLabels": [
+          "value",
+          "name"
+        ],
+        "legend": {
+          "displayMode": "hidden",
+          "placement": "bottom"
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "exemplar": true,
+          "expr": "tbw_network{network=\"peer_version\"}",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "{{version}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Peers version",
+      "type": "piechart"
+    },
+    {
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "links": [],
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 30
+              },
+              {
+                "color": "green",
+                "value": 50
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 18,
+        "y": 29
+      },
+      "id": 51,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "8.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "exemplar": true,
+          "expr": "tbw_network{network=\"peers_number\"}",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "B"
+        }
+      ],
+      "title": "Peers",
+      "type": "gauge"
+    },
+    {
+      "description": "",
+      "gridPos": {
+        "h": 1,
+        "w": 9,
+        "x": 13,
+        "y": 36
+      },
+      "id": 184,
+      "options": {
+        "content": "<br/>s",
+        "mode": "html"
+      },
+      "pluginVersion": "8.3.2",
+      "transparent": true,
+      "type": "text"
     }
   ],
-  "refresh": "10s",
+  "refresh": false,
   "schemaVersion": 33,
   "style": "dark",
   "tags": [],
@@ -1898,8 +2429,8 @@
     ]
   },
   "timezone": "",
-  "title": "tbw_node_monitoring",
-  "uid": "BTHMURs7k",
-  "version": 1,
+  "title": "TBW delegate monitoring",
+  "uid": "NYwneRsnz",
+  "version": 27,
   "weekStart": ""
 }
