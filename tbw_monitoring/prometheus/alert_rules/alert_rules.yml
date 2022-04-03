@@ -1,0 +1,37 @@
+groups:
+- name: TBW Round alerting
+  rules:
+  - alert: TBW not running
+    expr: absent(tbw_blockchain{blockchain="t_cur_round"})
+    labels:
+      severity: critical
+      type: tbw
+    annotations:
+      summary: TBW is not running
+      description: Cannot find TBW current round
+  - alert: TBW is out of sync
+    expr: sum(tbw_blockchain{blockchain="b_cur_round"}) - sum(tbw_blockchain{blockchain="d_cur_round"}) >= 2
+    labels:
+      severity: critical
+      type: tbw
+    annotations:
+      summary: TBW is out of sync
+      description: TBW round is different from current delegate forging round
+- name: Delegate Forger alerting
+  rules:
+  - alert: Forger not running
+    expr: absent(tbw_blockchain{blockchain="d_cur_round"})
+    labels:
+      severity: critical
+      type: tbw
+    annotations:
+      summary: Forger is not running
+      description: Cannot find Forger current round
+  - alert: Delegate is not forging
+    expr: sum(tbw_blockchain{blockchain="b_cur_round"}) - sum(tbw_blockchain{blockchain="d_cur_round"}) >= 2
+    labels:
+      severity: critical
+      type: tbw
+    annotations:
+      summary: Delegate is not forging
+      description: Delegate forging round is different from current blockchain round

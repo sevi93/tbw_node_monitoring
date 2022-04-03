@@ -1,0 +1,6 @@
+{{ define "custom_telegram" }}
+{{ range .Alerts }}
+{{ if eq .Status "firing" }}🔥 Alerts Firing:{{else}}✅ Alerts Resolved:{{ end }} {{.Annotations.summary }}
+Description: {{ .Annotations.description }}
+{{ end }}
+{{ end }}
