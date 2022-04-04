@@ -10,7 +10,7 @@ groups:
       summary: TBW is not running
       description: Cannot find TBW current round
   - alert: TBW is out of sync
-    expr: sum(tbw_blockchain{blockchain="b_cur_round"}) - sum(tbw_blockchain{blockchain="d_cur_round"}) >= 2
+    expr: sum(tbw_blockchain{blockchain="t_cur_round"}) - sum(tbw_blockchain{blockchain="d_cur_round"}) >= 2
     labels:
       severity: critical
       type: tbw
