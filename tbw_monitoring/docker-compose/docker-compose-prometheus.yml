@@ -7,9 +7,9 @@ services:
     command:
       - "--web.listen-address=:${PROMETHEUS_PORT:-9091}"
       - "--config.file=/etc/prometheus/prometheus.yml"
-    # Uncomment the lines below if you want to expose Prometheus to your local network, so other machines can access it
-    ports:
-      - "${PROMETHEUS_PORT:-9091}:${PROMETHEUS_PORT:-9091}/tcp"
+#    Uncomment the lines below if you want to expose Prometheus to your local network, so other machines can access it
+#    ports:
+#      - "${PROMETHEUS_PORT:-9091}:${PROMETHEUS_PORT:-9091}/tcp"
     volumes:
       - "../prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
       - "../prometheus/alert_rules/alert_rules.yml:/etc/prometheus/alert_rules/alert_rules.yml"
