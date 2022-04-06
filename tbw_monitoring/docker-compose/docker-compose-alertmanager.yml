@@ -6,9 +6,9 @@ services:
     restart: unless-stopped
     command:
       - "--config.file=/etc/alertmanager/alertmanager.yml"
-    # Uncomment the lines below if you want to expose Prometheus to your local network, so other machines can access it
-    # ports:
-    #  - "${ALERTMANAGER_PORT:-9093}:${ALERTMANAGER_PORT:-9093}/tcp"
+#    # Uncomment the lines below if you want to expose Prometheus to your local network, so other machines can access it
+#    ports:
+#      - "${ALERTMANAGER_PORT:-9093}:${ALERTMANAGER_PORT:-9093}/tcp"
     volumes:
       - "../alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml"
       - "../alertmanager/templates/default.tmpl:/etc/alertmanager/templates/default.tmpl"

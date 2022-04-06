@@ -11,10 +11,11 @@ services:
     restart: unless-stopped
     networks:
       - net
-    ports:
-      - target: 8080
-        published: 9338
-        protocol: tcp
+# Uncomment the lines below if you want to expose Prometheus to your local network, so other machines can access it
+#    ports:
+#      - target: 8080
+#        published: 9338
+#        protocol: tcp
     labels:
       org.label-schema.group: "monitoring"
 networks:
