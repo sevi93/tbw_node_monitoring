@@ -1,8 +1,8 @@
 # TBW Node monioring
 
-This repository contains packaged tool aiming Delegates who want a packaged tool in order monitor their forger node and also their payout script based on Goose TBW payout script.
+This repository contains packaged tool aiming Delegates who want a packaged tool in order monitor their forger node and also their payout script based on [Goose TBW payout script](https://github.com/galperins4/core2_tbw).
 
-This tool has a dependency with [tbw_exporter_api]((https://github.com/sevi93/tbw_exporter_api)) in order to display all the TBW and Network metrics on the dashboard.
+This tool has a dependency with [tbw_exporter_api](https://github.com/sevi93/tbw_exporter_api) in order to display all the TBW and Network metrics on the dashboard.
 
 <p align="center">
 	<img src="./banner.png" />
