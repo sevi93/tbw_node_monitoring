@@ -3,6 +3,7 @@ groups:
   rules:
   - alert: TBW not running
     expr: absent(tbw_blockchain{blockchain="t_cur_round"})
+    for: 5m
     labels:
       severity: critical
       type: tbw
@@ -11,6 +12,7 @@ groups:
       description: Cannot find TBW current round
   - alert: TBW is out of sync
     expr: sum(tbw_blockchain{blockchain="d_cur_round"}) - sum(tbw_blockchain{blockchain="t_cur_round"}) >= 2
+    for: 5m
     labels:
       severity: critical
       type: tbw
@@ -21,6 +23,7 @@ groups:
   rules:
   - alert: Forger not running
     expr: absent(tbw_blockchain{blockchain="d_cur_round"})
+    for: 5m
     labels:
       severity: critical
       type: tbw
@@ -29,6 +32,7 @@ groups:
       description: Cannot find Forger current round
   - alert: Delegate is not forging
     expr: sum(tbw_blockchain{blockchain="b_cur_round"}) - sum(tbw_blockchain{blockchain="d_cur_round"}) >= 2
+    for: 5m
     labels:
       severity: critical
       type: tbw
