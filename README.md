@@ -1,9 +1,13 @@
-# TBW Node monioring
+# TBW Node monitoring
 
-This repository contains packaged tool aiming for Delegates who want a packaged tool in order monitor their forger node and also their payout script based on Goose TBW payout script.
+This repository contains a monitoring tool aiming Delegates who want a packaged observability & alerting tool in order to monitor their forger node and also their payout script based on [Goose TBW payout script](https://github.com/galperins4/core2_tbw).
 
-This tool has a dependency with [tbw_exporter_api]((https://github.com/sevi93/tbw_exporter_api)) in order to display all the TBW and Network metrics on the dashboard.
+This tool has a dependency with [tbw_exporter_api](https://github.com/sevi93/tbw_exporter_api) in order to display all the TBW and Network metrics on the dashboard.
 
+
+<p align="center">
+	<img src="./banner.png" />
+</p>
 
 # Architecture
 
@@ -31,7 +35,7 @@ __**Grafana**__
 ```
 ./install.sh
 ```
-Go to `http://node_ip:3100` and change the admin account which is by default admin/admin
+Go to `http://node_ip:3100` to access grafana and change the password of the admin account which is by default admin/admin
 
 # Telegram alerting
 
@@ -41,3 +45,6 @@ Alerting is currently in beta, if you want to use it, you will need to:
  - Re-run the installer.sh
  - Docker restart
 
+# Security
+
+By default grafana will listen on all addresses and will be exposed to outside networks, so this is recommanded to change the default password imediately after the setup and also to use a firewall on top of your node
